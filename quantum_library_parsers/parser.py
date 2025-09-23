@@ -10,12 +10,24 @@ from numpy import array
 import pennylane as qml
 import cirq
 
-from .parser_utils import NOT_INVOLVED, AUXILIARY, CONTROL, TARGET, GATE, IDENTITY_MATRIX, STATE, GATE_INFO, IDENTITY_MATRIX_NAME, simplify_values_state_vector, simplify_single_matrix
+from .parser_utils import (
+    NOT_INVOLVED,
+    AUXILIARY,
+    CONTROL,
+    TARGET,
+    GATE,
+    IDENTITY_MATRIX,
+    STATE,
+    GATE_INFO,
+    IDENTITY_MATRIX_NAME,
+    simplify_values_state_vector,
+    simplify_single_matrix,
+)
 from errors.errors import InputError
 from operation_info.gate_information import GateInformation
 
-class Parser(ABC):
 
+class Parser(ABC):
     @abstractmethod
     def run_pipeline(self, data):
         pass
@@ -36,7 +48,10 @@ class Parser(ABC):
             temp_file_name = temp_file.name
         try:
             result = subprocess.run(
-                [sys.executable, temp_file_name], capture_output=True, text=True, timeout=5
+                [sys.executable, temp_file_name],
+                capture_output=True,
+                text=True,
+                timeout=5,
             )
             output = eval(result.stdout, {"qml": qml, "array": array, "cirq": cirq})
 
@@ -46,7 +61,7 @@ class Parser(ABC):
             os.remove(temp_file_name)
 
         return output
-    
+
     @abstractmethod
     def create_gate_information_list_for_gates(self, gate_attributes):
         pass
@@ -83,9 +98,11 @@ class Parser(ABC):
 
             # Go through all qubits used in gate
             for i in range(0, len(all_gate_indices)):
-
                 # If a qubit in the current gate column already is being used for a gate, flag availability as false
-                if grouped_gates_be[column_pointer][all_gate_indices[i]] != NOT_INVOLVED:
+                if (
+                    grouped_gates_be[column_pointer][all_gate_indices[i]]
+                    != NOT_INVOLVED
+                ):
                     available = False
 
             # Move to the next column if space is not available in current column
@@ -99,15 +116,17 @@ class Parser(ABC):
 
             # if multi-qubit gate, place control and target qubits
             else:
-
                 # Place control qubits
                 for j in range(0, len(control_qubit_indices)):
-
                     # Place CircuitInstruction at first control index
                     if j == 0:
-                        grouped_gates_be[column_pointer][control_qubit_indices[j]] = gate
+                        grouped_gates_be[column_pointer][control_qubit_indices[j]] = (
+                            gate
+                        )
                     else:
-                        grouped_gates_be[column_pointer][control_qubit_indices[j]] = CONTROL
+                        grouped_gates_be[column_pointer][control_qubit_indices[j]] = (
+                            CONTROL
+                        )
 
                 # Place target qubits
                 for j in range(0, len(target_qubit_indices)):
@@ -158,12 +177,10 @@ class Parser(ABC):
 
         # Go through each grouped gate column and check each qubit
         for i in range(0, len(grouped_gates)):
-
             # Store computed matrix for column in matrix variable
             matrix = []
 
             for j in range(0, num_qubits):
-
                 current_qubit_in_column = grouped_gates[i][j]
 
                 # Continue if current qubit does not contain a GateInformation object or is involved in a gate
@@ -184,11 +201,19 @@ class Parser(ABC):
 
                 # If no matrix has been applied yet..
                 elif len(matrix) == 0:
-                    matrix = current_qubit_in_column.get_matrix_le() if little_endian else current_qubit_in_column.get_matrix_be()
+                    matrix = (
+                        current_qubit_in_column.get_matrix_le()
+                        if little_endian
+                        else current_qubit_in_column.get_matrix_be()
+                    )
 
                 # If matrices have already been applied...
                 else:
-                    matrix = np.kron(matrix, current_qubit_in_column.get_matrix_le()) if little_endian else np.kron(matrix, current_qubit_in_column.get_matrix_be())
+                    matrix = (
+                        np.kron(matrix, current_qubit_in_column.get_matrix_le())
+                        if little_endian
+                        else np.kron(matrix, current_qubit_in_column.get_matrix_be())
+                    )
 
             matrix_gate_json_list.append(
                 {"content": matrix.tolist(), "type": GATE, "key": i + 1}
@@ -217,7 +242,6 @@ class Parser(ABC):
         )
 
         for i in range(0, len(matrices)):
-
             vector = np.dot(matrices[i]["content"], vector)
             matrix_vector_state_json.append(
                 {
@@ -229,14 +253,16 @@ class Parser(ABC):
 
         return matrix_vector_state_json
 
-    def create_tensor_product_matrix_gate_json(self, num_qubits, grouped_gates, little_endian=False):
+    def create_tensor_product_matrix_gate_json(
+        self, num_qubits, grouped_gates, little_endian=False
+    ):
         """
         Creates lists of matrices for tensor product setting
 
         Args:
             num_qubits (int): number of qubits in the circuit
             grouped_gates (list[object]): quantum circuit being operated on
-            little_endian (boolean): flag for endianess
+            little_endian (boolean): flag for endianness
 
         Returns:
             list[object]: list of JSON objects describing matrices for tensor product setting
@@ -245,33 +271,37 @@ class Parser(ABC):
 
         # Go through each grouped gate column and check each qubit
         for i in range(0, len(grouped_gates)):
-
             matrices = []
 
             # Matrix calculations for column
             for j in range(0, num_qubits):
-
                 current_qubit_in_column = grouped_gates[i][j]
 
                 # format and append matrices found to list
                 if type(current_qubit_in_column) == GateInformation:
-
                     matrices.append(
                         simplify_single_matrix(
-                            (current_qubit_in_column.get_matrix_le().tolist() if little_endian else current_qubit_in_column.get_matrix_be().tolist()).copy())
+                            (
+                                current_qubit_in_column.get_matrix_le().tolist()
+                                if little_endian
+                                else current_qubit_in_column.get_matrix_be().tolist()
+                            ).copy()
+                        )
                     )
 
                 # append identity matrix if qubit is not being used by any other gate
                 elif current_qubit_in_column == NOT_INVOLVED:
                     matrices.append(IDENTITY_MATRIX.tolist())
 
-            matrix_gate_json_list.append({"content": matrices, "type": GATE, "key": i + 1})
+            matrix_gate_json_list.append(
+                {"content": matrices, "type": GATE, "key": i + 1}
+            )
 
         return matrix_gate_json_list
 
     def create_circuit_dirac_gates_json(self, num_qubits, grouped_gates):
         """
-        Creats JSON objects for describing data for equation components for circuit and Dirac
+        Creates JSON objects for describing data for equation components for circuit and Dirac
 
         Args:
             num_qubits (int): the number of qubits in the quantum circuit
@@ -288,7 +318,6 @@ class Parser(ABC):
 
         # Go through each grouped gate column and check each qubit
         for i in range(0, len(grouped_gates)):
-
             content = []
 
             for j in range(0, num_qubits):
@@ -303,7 +332,10 @@ class Parser(ABC):
                     )
                 elif current_qubit_in_column == NOT_INVOLVED:
                     content.append(
-                        {"gate": IDENTITY_MATRIX_NAME, "gate_type": current_qubit_in_column}
+                        {
+                            "gate": IDENTITY_MATRIX_NAME,
+                            "gate_type": current_qubit_in_column,
+                        }
                     )
                 else:
                     content.append({"gate": "", "gate_type": current_qubit_in_column})
@@ -332,7 +364,6 @@ class Parser(ABC):
         for i in range(0, len(state_vector)):
             values = []
             for j in range(0, len(state_vector[i]["content"])):
-
                 # if the state exists, convert it into binary
                 if state_vector[i]["content"][j][0] != 0:
                     values.append(
@@ -344,7 +375,7 @@ class Parser(ABC):
             dirac_state_json.append({"content": values, "type": STATE, "key": i})
 
         return dirac_state_json
-    
+
     def simplify_matrices_json(self, matrices):
         """
         Wrapper for simplifying list of JSON objects describing matrices used in equation portion of matrix notation component

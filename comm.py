@@ -6,8 +6,9 @@ from errors import QNotationException, MESSAGE_UNKNOWN_ERROR
 
 app = Flask(__name__)
 
-#CORS(app, resources={r"/*": {"origins": "https://qnotation.vercel.app"}})
+# CORS(app, resources={r"/*": {"origins": "https://qnotation.vercel.app"}})
 CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
@@ -17,9 +18,9 @@ def serve(path):
     else:
         return send_from_directory(app.static_folder, "index.html")
 
+
 @app.post("/notation_data")
 def notation_data():
-
     data = request.get_json()
 
     qc_string = data.get("qc_string")
@@ -41,6 +42,7 @@ def notation_data():
 
     try:
         parser = ParserFactory.get_parser(qc_type)
+        print("parser", parser)
         return jsonify(parser.run_pipeline(qc_string))
     except QNotationException as e:
         print(f"QNOTATION ERROR {e}")
@@ -71,5 +73,6 @@ def notation_data():
 
     return json_to_return
 
+
 if __name__ == "__main__":
-    app.run(port=8000, debug=True)
+    app.run(port=8000)

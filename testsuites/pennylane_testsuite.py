@@ -1,5 +1,30 @@
 import asyncio
-from .test_utils import *
+from .test_utils import (
+    TestPennylane,
+    send_request,
+    EMPTY,
+    STATUS,
+    BAD_REQUEST_ERR,
+    NUM_QUBITS,
+    CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN,
+    CIRCUIT_DIRAC_GATE_BIG_ENDIAN,
+    DIRAC_STATE_LITTLE_ENDIAN,
+    DIRAC_STATE_BIG_ENDIAN,
+    MATRIX_GATE_LITTLE_ENDIAN,
+    MATRIX_GATE_BIG_ENDIAN,
+    MATRIX_GATE_TENSOR_LITTLE_ENDIAN,
+    MATRIX_GATE_TENSOR_BIG_ENDIAN,
+    MATRIX_STATE_LITTLE_ENDIAN,
+    MATRIX_STATE_BIG_ENDIAN,
+    PENNYLANE_TYPO,
+    PENNYLANE_SINGLE_QUBIT_SINGLE_HADAMARD,
+    SUCCESS,
+    PENNYLANE_SINGLE_QUBIT_SINGLE_HADAMARD,
+    RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD,
+    PENNYLANE_BELL_STATE_THREE_QUBITS,
+    RESULTS_BELL_STATES_THREE_QUBITS
+)
+
 
 class TestEmpty(TestPennylane):
     @classmethod
@@ -46,7 +71,7 @@ class TestEmpty(TestPennylane):
 class TestTypo(TestPennylane):
     @classmethod
     def setup_class(cls):
-        cls.data = asyncio.run(send_request(QISKIT_TYPO, super().qc_type))
+        cls.data = asyncio.run(send_request(PENNYLANE_TYPO, super().qc_type))
 
     def test_status_code(self):
         assert self.data[STATUS] == BAD_REQUEST_ERR
@@ -88,7 +113,9 @@ class TestTypo(TestPennylane):
 class TestSingleQubitSingleHadamard(TestPennylane):
     @classmethod
     def setup_class(cls):
-        cls.data = asyncio.run(send_request(PENNYLANE_SINGLE_QUBIT_SINGLE_HADAMARD, super().qc_type))
+        cls.data = asyncio.run(
+            send_request(PENNYLANE_SINGLE_QUBIT_SINGLE_HADAMARD, super().qc_type)
+        )
 
     def test_status_code(self):
         assert self.data["status"] == SUCCESS
@@ -97,39 +124,72 @@ class TestSingleQubitSingleHadamard(TestPennylane):
         assert self.data[NUM_QUBITS] == 1
 
     def test_circuit_dirac_little_endian(self):
-        assert self.data[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
+        assert (
+            self.data[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
+        )
 
     def test_circuit_dirac_big_endian(self):
-        assert self.data[CIRCUIT_DIRAC_GATE_BIG_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
+        assert (
+            self.data[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
+        )
 
     def test_dirac_state_little_endian(self):
-        assert self.data[DIRAC_STATE_LITTLE_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[DIRAC_STATE_LITTLE_ENDIAN]
+        assert (
+            self.data[DIRAC_STATE_LITTLE_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[DIRAC_STATE_LITTLE_ENDIAN]
+        )
 
     def test_dirac_state_big_endian(self):
-        assert self.data[DIRAC_STATE_BIG_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[DIRAC_STATE_BIG_ENDIAN]
+        assert (
+            self.data[DIRAC_STATE_BIG_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[DIRAC_STATE_BIG_ENDIAN]
+        )
 
     def test_matrix_gate_little_endian(self):
-        assert self.data[MATRIX_GATE_LITTLE_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_LITTLE_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_LITTLE_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_LITTLE_ENDIAN]
+        )
 
     def test_matrix_gate_big_endian(self):
-        assert self.data[MATRIX_GATE_BIG_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_BIG_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_BIG_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_BIG_ENDIAN]
+        )
 
     def test_matrix_gate_tensor_little_endian(self):
-        assert self.data[MATRIX_GATE_TENSOR_LITTLE_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
+        )
 
     def test_matrix_gate_tensor_big_endian(self):
-        assert self.data[MATRIX_GATE_TENSOR_BIG_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_TENSOR_BIG_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_TENSOR_BIG_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_GATE_TENSOR_BIG_ENDIAN]
+        )
 
     def test_matrix_state_little_endian(self):
-        assert self.data[MATRIX_STATE_LITTLE_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_STATE_LITTLE_ENDIAN]
+        assert (
+            self.data[MATRIX_STATE_LITTLE_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_STATE_LITTLE_ENDIAN]
+        )
 
     def test_matrix_state_big_endian(self):
-        assert self.data[MATRIX_STATE_BIG_ENDIAN] == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_STATE_BIG_ENDIAN]
+        assert (
+            self.data[MATRIX_STATE_BIG_ENDIAN]
+            == RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD[MATRIX_STATE_BIG_ENDIAN]
+        )
+
 
 class TestBellStateThreeQubits(TestPennylane):
     @classmethod
     def setup_class(cls):
-        cls.data = asyncio.run(send_request(PENNYLANE_BELL_STATE_THREE_QUBITS, super().qc_type))
+        cls.data = asyncio.run(
+            send_request(PENNYLANE_BELL_STATE_THREE_QUBITS, super().qc_type)
+        )
 
     def test_status_code(self):
         assert self.data["status"] == SUCCESS
@@ -138,31 +198,61 @@ class TestBellStateThreeQubits(TestPennylane):
         assert self.data[NUM_QUBITS] == 3
 
     def test_circuit_dirac_little_endian(self):
-        assert self.data[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
+        assert (
+            self.data[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
+        )
 
     def test_circuit_dirac_big_endian(self):
-        assert self.data[CIRCUIT_DIRAC_GATE_BIG_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
+        assert (
+            self.data[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
+        )
 
     def test_dirac_state_little_endian(self):
-        assert self.data[DIRAC_STATE_LITTLE_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[DIRAC_STATE_LITTLE_ENDIAN]
+        assert (
+            self.data[DIRAC_STATE_LITTLE_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[DIRAC_STATE_LITTLE_ENDIAN]
+        )
 
     def test_dirac_state_big_endian(self):
-        assert self.data[DIRAC_STATE_BIG_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[DIRAC_STATE_BIG_ENDIAN]
+        assert (
+            self.data[DIRAC_STATE_BIG_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[DIRAC_STATE_BIG_ENDIAN]
+        )
 
     def test_matrix_gate_little_endian(self):
-        assert self.data[MATRIX_GATE_LITTLE_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_LITTLE_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_LITTLE_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_LITTLE_ENDIAN]
+        )
 
     def test_matrix_gate_big_endian(self):
-        assert self.data[MATRIX_GATE_BIG_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_BIG_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_BIG_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_BIG_ENDIAN]
+        )
 
     def test_matrix_gate_tensor_little_endian(self):
-        assert self.data[MATRIX_GATE_TENSOR_LITTLE_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
+        )
 
     def test_matrix_gate_tensor_big_endian(self):
-        assert self.data[MATRIX_GATE_TENSOR_BIG_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_TENSOR_BIG_ENDIAN]
+        assert (
+            self.data[MATRIX_GATE_TENSOR_BIG_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_GATE_TENSOR_BIG_ENDIAN]
+        )
 
     def test_matrix_state_little_endian(self):
-        assert self.data[MATRIX_STATE_LITTLE_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_STATE_LITTLE_ENDIAN]
+        assert (
+            self.data[MATRIX_STATE_LITTLE_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_STATE_LITTLE_ENDIAN]
+        )
 
     def test_matrix_state_big_endian(self):
-        assert self.data[MATRIX_STATE_BIG_ENDIAN] == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_STATE_BIG_ENDIAN]
+        assert (
+            self.data[MATRIX_STATE_BIG_ENDIAN]
+            == RESULTS_BELL_STATES_THREE_QUBITS[MATRIX_STATE_BIG_ENDIAN]
+        )

@@ -11,5 +11,5 @@ __all__ = [
     "InputError",
     "HigherIndexedControlQubitError",
     "GateInformation",
-    "MultiQubitMatrixInformation"
+    "MultiQubitMatrixInformation",
 ]

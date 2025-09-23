@@ -1,6 +1,9 @@
 import httpx
 from abc import ABC, abstractmethod
-from errors.errors import MESSAGE_HIGHER_INDEXED_CONTROL_QUBIT_ERROR, MESSAGE_UNKNOWN_ERROR
+from errors.errors import (
+    MESSAGE_HIGHER_INDEXED_CONTROL_QUBIT_ERROR,
+    MESSAGE_UNKNOWN_ERROR,
+)
 
 EMPTY = ""
 
@@ -20,10 +23,12 @@ QISKIT_HIGHER_CONTROL_QUBIT_INDEX = "from qiskit import QuantumCircuit\nimport n
 QISKIT_NON_NEIGHBOURING_QUBITS = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(3)\n\n# Insert code below\nqc.h(0)\nqc.cx(0, 2)\n"
 
 # PENNYLANE INPUTS
-PENNYLANE_SINGLE_QUBIT_SINGLE_HADAMARD = "import pennylane as qml\nimport numpy as np\ndev = qml.device(\"default.qubit\", wires=1)\n@qml.qnode(dev)\ndef qc():\n\tqml.Hadamard(wires=0)\n\treturn qml.state()\nqc()"
-PENNYLANE_BELL_STATE_THREE_QUBITS = "import pennylane as qml\nimport numpy as np\ndev = qml.device(\"default.qubit\", wires=3)\n@qml.qnode(dev)\ndef qc():\n\tqml.Hadamard(wires=0)\n\tqml.CNOT(wires=[0, 1])\n\treturn qml.state()\nqc()"
+PENNYLANE_TYPO = 'import pennylane as qml\nimport numpy as np\ndev = qml.device("default.qubit", wires=1)\n@qml.qnode(dev)\ndef qc():\n\tql.Hadamard(wires=0)\n\treturn qml.state()\nqc()'
+PENNYLANE_SINGLE_QUBIT_SINGLE_HADAMARD = 'import pennylane as qml\nimport numpy as np\ndev = qml.device("default.qubit", wires=1)\n@qml.qnode(dev)\ndef qc():\n\tqml.Hadamard(wires=0)\n\treturn qml.state()\nqc()'
+PENNYLANE_BELL_STATE_THREE_QUBITS = 'import pennylane as qml\nimport numpy as np\ndev = qml.device("default.qubit", wires=3)\n@qml.qnode(dev)\ndef qc():\n\tqml.Hadamard(wires=0)\n\tqml.CNOT(wires=[0, 1])\n\treturn qml.state()\nqc()'
 
 # CIRQ INPUTS
+CIRQ_TYPO = "import cirq\nimport numpy as np\nqubit0 = cirq.LineQubit(0)\ncircuit = cirq.Circuit()\ncircit.append([cirq.H(qubit0)])"
 CIRQ_SINGLE_QUBIT_SINGLE_HADAMARD = "import cirq\nimport numpy as np\nqubit0 = cirq.LineQubit(0)\ncircuit = cirq.Circuit()\ncircuit.append([cirq.H(qubit0)])"
 
 URL = "http://127.0.0.1:8000/notation_data"
@@ -48,16 +53,236 @@ NUM_QUBITS = "num_qubits"
 # RESULTS
 
 RESULTS_BELL_STATES_THREE_QUBITS = {
-    "circuit_dirac_gate_big_endian": [{'content': [[0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [{'gate': 'H', 'gate_type': 'GATE INFO'}, {'gate': 'I', 'gate_type': 'NOT INVOLVED'}, {'gate': 'I', 'gate_type': 'NOT INVOLVED'}], 'type': 'GATE', 'key': 1}, {'content': [{'gate': 'CX', 'gate_type': 'GATE INFO'}, {'gate': '', 'gate_type': 'TARGET'}, {'gate': 'I', 'gate_type': 'NOT INVOLVED'}], 'type': 'GATE', 'key': 2}],
-    "circuit_dirac_gate_little_endian": [{'content': [[0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [{'gate': 'I', 'gate_type': 'NOT INVOLVED'}, {'gate': 'I', 'gate_type': 'NOT INVOLVED'}, {'gate': 'H', 'gate_type': 'GATE INFO'}], 'type': 'GATE', 'key': 1}, {'content': [{'gate': 'I', 'gate_type': 'NOT INVOLVED'}, {'gate': '', 'gate_type': 'TARGET'}, {'gate': 'CX', 'gate_type': 'GATE INFO'}], 'type': 'GATE', 'key': 2}],
-    "dirac_state_big_endian": [{'content': [{'bin': '000', 'scalar': 1}], 'type': 'STATE', 'key': 0}, {'content': [{'bin': '000', 'scalar': 0.71}, {'bin': '100', 'scalar': 0.71}], 'type': 'STATE', 'key': 1}, {'content': [{'bin': '000', 'scalar': 0.71}, {'bin': '110', 'scalar': 0.71}], 'type': 'STATE', 'key': 2}],
-    "dirac_state_little_endian": [{'content': [{'bin': '000', 'scalar': 1}], 'type': 'STATE', 'key': 0}, {'content': [{'bin': '000', 'scalar': 0.71}, {'bin': '001', 'scalar': 0.71}], 'type': 'STATE', 'key': 1}, {'content': [{'bin': '000', 'scalar': 0.71}, {'bin': '011', 'scalar': 0.71}], 'type': 'STATE', 'key': 2}],
-    "matrix_gate_big_endian": [{'content': [[1], [0], [0], [0], [0], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[0.71, 0.0, 0.0, 0.0, 0.71, 0.0, 0.0, 0.0], [0.0, 0.71, 0.0, 0.0, 0.0, 0.71, 0.0, 0.0], [0.0, 0.0, 0.71, 0.0, 0.0, 0.0, 0.71, 0.0], [0.0, 0.0, 0.0, 0.71, 0.0, 0.0, 0.0, 0.71], [0.71, 0.0, 0.0, 0.0, -0.71, 0.0, 0.0, 0.0], [0.0, 0.71, 0.0, 0.0, 0.0, -0.71, 0.0, 0.0], [0.0, 0.0, 0.71, 0.0, 0.0, 0.0, -0.71, 0.0], [0.0, 0.0, 0.0, 0.71, 0.0, 0.0, 0.0, -0.71]], 'type': 'GATE', 'key': 1}, {'content': [[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]], 'type': 'GATE', 'key': 2}],
-    "matrix_gate_little_endian": [{'content': [[1], [0], [0], [0], [0], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[0.71, 0.71, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.71, -0.71, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.71, 0.71, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.71, -0.71, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.71, 0.71, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.71, -0.71, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.71, 0.71], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.71, -0.71]], 'type': 'GATE', 'key': 1}, {'content': [[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]], 'type': 'GATE', 'key': 2}],
-    "matrix_gate_tensor_big_endian": [{'content': [[1], [0], [0], [0], [0], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[[0.71, 0.71], [0.71, -0.71]], [[1, 0], [0, 1]], [[1, 0], [0, 1]]], 'type': 'GATE', 'key': 1}, {'content': [[[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0]], [[1, 0], [0, 1]]], 'type': 'GATE', 'key': 2}],
-    "matrix_gate_tensor_little_endian": [{'content': [[1], [0], [0], [0], [0], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[[1, 0], [0, 1]], [[1, 0], [0, 1]], [[0.71, 0.71], [0.71, -0.71]]], 'type': 'GATE', 'key': 1}, {'content': [[[1, 0], [0, 1]], [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0]]], 'type': 'GATE', 'key': 2}],
-    "matrix_state_big_endian": [{'content': [[1], [0], [0], [0], [0], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[0.71], [0.0], [0.0], [0.0], [0.71], [0.0], [0.0], [0.0]], 'type': 'GATE', 'key': 1}, {'content': [[0.71], [0.0], [0.0], [0.0], [0.0], [0.0], [0.71], [0.0]], 'type': 'GATE', 'key': 2}],
-    "matrix_state_little_endian": [{'content': [[1], [0], [0], [0], [0], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[0.71], [0.71], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]], 'type': 'GATE', 'key': 1}, {'content': [[0.71], [0.0], [0.0], [0.71], [0.0], [0.0], [0.0], [0.0]], 'type': 'GATE', 'key': 2}],
+    "circuit_dirac_gate_big_endian": [
+        {"content": [[0], [0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                {"gate": "H", "gate_type": "GATE INFO"},
+                {"gate": "I", "gate_type": "NOT INVOLVED"},
+                {"gate": "I", "gate_type": "NOT INVOLVED"},
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [
+                {"gate": "CX", "gate_type": "GATE INFO"},
+                {"gate": "", "gate_type": "TARGET"},
+                {"gate": "I", "gate_type": "NOT INVOLVED"},
+            ],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
+    "circuit_dirac_gate_little_endian": [
+        {"content": [[0], [0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                {"gate": "I", "gate_type": "NOT INVOLVED"},
+                {"gate": "I", "gate_type": "NOT INVOLVED"},
+                {"gate": "H", "gate_type": "GATE INFO"},
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [
+                {"gate": "I", "gate_type": "NOT INVOLVED"},
+                {"gate": "", "gate_type": "TARGET"},
+                {"gate": "CX", "gate_type": "GATE INFO"},
+            ],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
+    "dirac_state_big_endian": [
+        {"content": [{"bin": "000", "scalar": 1}], "type": "STATE", "key": 0},
+        {
+            "content": [{"bin": "000", "scalar": 0.71}, {"bin": "100", "scalar": 0.71}],
+            "type": "STATE",
+            "key": 1,
+        },
+        {
+            "content": [{"bin": "000", "scalar": 0.71}, {"bin": "110", "scalar": 0.71}],
+            "type": "STATE",
+            "key": 2,
+        },
+    ],
+    "dirac_state_little_endian": [
+        {"content": [{"bin": "000", "scalar": 1}], "type": "STATE", "key": 0},
+        {
+            "content": [{"bin": "000", "scalar": 0.71}, {"bin": "001", "scalar": 0.71}],
+            "type": "STATE",
+            "key": 1,
+        },
+        {
+            "content": [{"bin": "000", "scalar": 0.71}, {"bin": "011", "scalar": 0.71}],
+            "type": "STATE",
+            "key": 2,
+        },
+    ],
+    "matrix_gate_big_endian": [
+        {
+            "content": [[1], [0], [0], [0], [0], [0], [0], [0]],
+            "type": "STATE",
+            "key": 0,
+        },
+        {
+            "content": [
+                [0.71, 0.0, 0.0, 0.0, 0.71, 0.0, 0.0, 0.0],
+                [0.0, 0.71, 0.0, 0.0, 0.0, 0.71, 0.0, 0.0],
+                [0.0, 0.0, 0.71, 0.0, 0.0, 0.0, 0.71, 0.0],
+                [0.0, 0.0, 0.0, 0.71, 0.0, 0.0, 0.0, 0.71],
+                [0.71, 0.0, 0.0, 0.0, -0.71, 0.0, 0.0, 0.0],
+                [0.0, 0.71, 0.0, 0.0, 0.0, -0.71, 0.0, 0.0],
+                [0.0, 0.0, 0.71, 0.0, 0.0, 0.0, -0.71, 0.0],
+                [0.0, 0.0, 0.0, 0.71, 0.0, 0.0, 0.0, -0.71],
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [
+                [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+                [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            ],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
+    "matrix_gate_little_endian": [
+        {
+            "content": [[1], [0], [0], [0], [0], [0], [0], [0]],
+            "type": "STATE",
+            "key": 0,
+        },
+        {
+            "content": [
+                [0.71, 0.71, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.71, -0.71, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.71, 0.71, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.71, -0.71, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.71, 0.71, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.71, -0.71, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.71, 0.71],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.71, -0.71],
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [
+                [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            ],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
+    "matrix_gate_tensor_big_endian": [
+        {
+            "content": [[1], [0], [0], [0], [0], [0], [0], [0]],
+            "type": "STATE",
+            "key": 0,
+        },
+        {
+            "content": [
+                [[0.71, 0.71], [0.71, -0.71]],
+                [[1, 0], [0, 1]],
+                [[1, 0], [0, 1]],
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [
+                [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 1.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                ],
+                [[1, 0], [0, 1]],
+            ],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
+    "matrix_gate_tensor_little_endian": [
+        {
+            "content": [[1], [0], [0], [0], [0], [0], [0], [0]],
+            "type": "STATE",
+            "key": 0,
+        },
+        {
+            "content": [
+                [[1, 0], [0, 1]],
+                [[1, 0], [0, 1]],
+                [[0.71, 0.71], [0.71, -0.71]],
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [
+                [[1, 0], [0, 1]],
+                [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 1.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                ],
+            ],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
+    "matrix_state_big_endian": [
+        {
+            "content": [[1], [0], [0], [0], [0], [0], [0], [0]],
+            "type": "STATE",
+            "key": 0,
+        },
+        {
+            "content": [[0.71], [0.0], [0.0], [0.0], [0.71], [0.0], [0.0], [0.0]],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [[0.71], [0.0], [0.0], [0.0], [0.0], [0.0], [0.71], [0.0]],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
+    "matrix_state_little_endian": [
+        {
+            "content": [[1], [0], [0], [0], [0], [0], [0], [0]],
+            "type": "STATE",
+            "key": 0,
+        },
+        {
+            "content": [[0.71], [0.71], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]],
+            "type": "GATE",
+            "key": 1,
+        },
+        {
+            "content": [[0.71], [0.0], [0.0], [0.71], [0.0], [0.0], [0.0], [0.0]],
+            "type": "GATE",
+            "key": 2,
+        },
+    ],
     "message": "",
     "num_qubits": 3,
     "status": SUCCESS,
@@ -125,16 +350,100 @@ RESULTS_SINGLE_QUBIT_SINGLE_HADAMARD = {
     "status": SUCCESS,
 }
 RESULTS_SINGLE_COLUMN_TWO_QUBIT_NEIGHBOURING_GATE = {
-    "circuit_dirac_gate_big_endian": [{'content': [[0], [0]], 'type': 'STATE', 'key': 0}, {'content': [{'gate': 'CX', 'gate_type': 'GATE INFO'}, {'gate': '', 'gate_type': 'TARGET'}], 'type': 'GATE', 'key': 1}],
-    "circuit_dirac_gate_little_endian": [{'content': [[0], [0]], 'type': 'STATE', 'key': 0}, {'content': [{'gate': '', 'gate_type': 'TARGET'}, {'gate': 'CX', 'gate_type': 'GATE INFO'}], 'type': 'GATE', 'key': 1}],
-    "dirac_state_big_endian": [{'content': [{'bin': '00', 'scalar': 1}], 'type': 'STATE', 'key': 0}, {'content': [{'bin': '00', 'scalar': 1.0}], 'type': 'STATE', 'key': 1}],
-    "dirac_state_little_endian": [{'content': [{'bin': '00', 'scalar': 1}], 'type': 'STATE', 'key': 0}, {'content': [{'bin': '00', 'scalar': 1.0}], 'type': 'STATE', 'key': 1}],
-    "matrix_gate_big_endian": [{'content': [[1], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 0.0]], 'type': 'GATE', 'key': 1}],
-    "matrix_gate_little_endian": [{'content': [[1], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0]], 'type': 'GATE', 'key': 1}],
-    "matrix_gate_tensor_big_endian": [{'content': [[1], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0]]], 'type': 'GATE', 'key': 1}],
-    "matrix_gate_tensor_little_endian": [{'content': [[1], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[[1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 1.0, 0.0], [0.0, 1.0, 0.0, 0.0]]], 'type': 'GATE', 'key': 1}],
-    "matrix_state_big_endian": [{'content': [[1], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[1.0], [0.0], [0.0], [0.0]], 'type': 'GATE', 'key': 1}],
-    "matrix_state_little_endian": [{'content': [[1], [0], [0], [0]], 'type': 'STATE', 'key': 0}, {'content': [[1.0], [0.0], [0.0], [0.0]], 'type': 'GATE', 'key': 1}],
+    "circuit_dirac_gate_big_endian": [
+        {"content": [[0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                {"gate": "CX", "gate_type": "GATE INFO"},
+                {"gate": "", "gate_type": "TARGET"},
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+    ],
+    "circuit_dirac_gate_little_endian": [
+        {"content": [[0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                {"gate": "", "gate_type": "TARGET"},
+                {"gate": "CX", "gate_type": "GATE INFO"},
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+    ],
+    "dirac_state_big_endian": [
+        {"content": [{"bin": "00", "scalar": 1}], "type": "STATE", "key": 0},
+        {"content": [{"bin": "00", "scalar": 1.0}], "type": "STATE", "key": 1},
+    ],
+    "dirac_state_little_endian": [
+        {"content": [{"bin": "00", "scalar": 1}], "type": "STATE", "key": 0},
+        {"content": [{"bin": "00", "scalar": 1.0}], "type": "STATE", "key": 1},
+    ],
+    "matrix_gate_big_endian": [
+        {"content": [[1], [0], [0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0, 0.0],
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+    ],
+    "matrix_gate_little_endian": [
+        {"content": [[1], [0], [0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                [1.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0, 0.0],
+                [0.0, 1.0, 0.0, 0.0],
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+    ],
+    "matrix_gate_tensor_big_endian": [
+        {"content": [[1], [0], [0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 1.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                ]
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+    ],
+    "matrix_gate_tensor_little_endian": [
+        {"content": [[1], [0], [0], [0]], "type": "STATE", "key": 0},
+        {
+            "content": [
+                [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 1.0],
+                    [0.0, 0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0],
+                ]
+            ],
+            "type": "GATE",
+            "key": 1,
+        },
+    ],
+    "matrix_state_big_endian": [
+        {"content": [[1], [0], [0], [0]], "type": "STATE", "key": 0},
+        {"content": [[1.0], [0.0], [0.0], [0.0]], "type": "GATE", "key": 1},
+    ],
+    "matrix_state_little_endian": [
+        {"content": [[1], [0], [0], [0]], "type": "STATE", "key": 0},
+        {"content": [[1.0], [0.0], [0.0], [0.0]], "type": "GATE", "key": 1},
+    ],
     "message": "",
     "num_qubits": 2,
     "status": SUCCESS,
@@ -172,11 +481,13 @@ RESULTS_NON_NEIGHBOURING_QUBITS = {
     "status": SERVER_ERR,
 }
 
+
 async def send_request(qc_string, qc_type):
     payload = {"qc_string": qc_string, "qc_type": qc_type}
     async with httpx.AsyncClient() as client:
         response = await client.post(URL, json=payload, headers=HEADERS)
         return response.json()
+
 
 class TestQNotation(ABC):
     """Abstract base class for test cases"""
@@ -229,11 +540,14 @@ class TestQNotation(ABC):
     def test_matrix_state_big_endian(self):
         pass
 
+
 class TestQiskit(TestQNotation):
     qc_type = QISKIT
 
+
 class TestPennylane(TestQNotation):
     qc_type = PENNYLANE
+
 
 class TestCirq(TestQNotation):
     qc_type = CIRQ

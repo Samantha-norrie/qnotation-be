@@ -4,13 +4,25 @@ from qiskit.quantum_info.operators import Operator
 
 from . import Parser
 from operation_info.gate_information import GateInformation
-from errors.errors import HigherIndexedControlQubitError, NonNeighbouringQubitsError, TooManyQubitsError
-from .parser_utils import  get_control_and_target_qubit_indices, insert_main_function_into_code_string, get_qiskit_gate_object_from_gate_name, QISKIT_CIRCUIT_GATE_LOOP, NUMPY_IMPORT_STRING, MAX_NUM_QUBITS_FOR_TENSOR, MAX_NUM_QUBITS_FOR_APP
+from errors.errors import (
+    HigherIndexedControlQubitError,
+    NonNeighbouringQubitsError,
+    TooManyQubitsError,
+)
+from .parser_utils import (
+    get_control_and_target_qubit_indices,
+    insert_main_function_into_code_string,
+    get_qiskit_gate_object_from_gate_name,
+    QISKIT_CIRCUIT_GATE_LOOP,
+    NUMPY_IMPORT_STRING,
+    MAX_NUM_QUBITS_FOR_TENSOR,
+    MAX_NUM_QUBITS_FOR_APP,
+)
 from operation_info.multi_qubit_matrix_information import MultiQubitMatrixInformation
 from operation_info.operation_info_utils import get_gate_acronym
 
-class QiskitParser(Parser):
 
+class QiskitParser(Parser):
     def run_pipeline(self, qc_string):
         """
         Runs pipeline for generating visualizations from Qiskit code
@@ -22,36 +34,52 @@ class QiskitParser(Parser):
             dict[object]: data needed for visualizations
         """
 
-        num_qubits, gate_attributes = self.convert_code_string_to_circuit_object(qc_string)
+        num_qubits, gate_attributes = self.convert_code_string_to_circuit_object(
+            qc_string
+        )
 
         if num_qubits > MAX_NUM_QUBITS_FOR_APP:
             raise TooManyQubitsError()
 
-        gate_information_list = self.create_gate_information_list_for_gates(gate_attributes)
+        gate_information_list = self.create_gate_information_list_for_gates(
+            gate_attributes
+        )
 
-        grouped_gates_big_endian, grouped_gates_little_endian = self.group_gates(num_qubits, gate_information_list)
+        grouped_gates_big_endian, grouped_gates_little_endian = self.group_gates(
+            num_qubits, gate_information_list
+        )
 
-        matrix_gate_little_endian = self.create_matrix_gate_json(num_qubits, grouped_gates_little_endian)
-        matrix_gate_big_endian = self.create_matrix_gate_json(num_qubits, grouped_gates_big_endian, False)
+        matrix_gate_little_endian = self.create_matrix_gate_json(
+            num_qubits, grouped_gates_little_endian
+        )
+        matrix_gate_big_endian = self.create_matrix_gate_json(
+            num_qubits, grouped_gates_big_endian, False
+        )
 
-        matrix_state_little_endian = self.create_matrix_state_vector_json(num_qubits, matrix_gate_little_endian)
+        matrix_state_little_endian = self.create_matrix_state_vector_json(
+            num_qubits, matrix_gate_little_endian
+        )
 
-        matrix_state_big_endian = self.create_matrix_state_vector_json(num_qubits, matrix_gate_big_endian)
+        matrix_state_big_endian = self.create_matrix_state_vector_json(
+            num_qubits, matrix_gate_big_endian
+        )
 
         if num_qubits <= MAX_NUM_QUBITS_FOR_TENSOR:
-            matrix_gate_tensor_little_endian = self.create_tensor_product_matrix_gate_json(
-                num_qubits, grouped_gates_little_endian, True
+            matrix_gate_tensor_little_endian = (
+                self.create_tensor_product_matrix_gate_json(
+                    num_qubits, grouped_gates_little_endian, True
+                )
             )
-            matrix_gate_tensor_little_endian.insert(
-                0, matrix_state_little_endian[0]
-            )
+            matrix_gate_tensor_little_endian.insert(0, matrix_state_little_endian[0])
 
             matrix_gate_tensor_big_endian = self.create_tensor_product_matrix_gate_json(
                 num_qubits, grouped_gates_big_endian
             )
             matrix_gate_tensor_big_endian.insert(0, matrix_state_big_endian[0])
 
-        matrix_gate_little_endian = self.simplify_matrices_json(matrix_gate_little_endian)
+        matrix_gate_little_endian = self.simplify_matrices_json(
+            matrix_gate_little_endian
+        )
         matrix_gate_big_endian = self.simplify_matrices_json(matrix_gate_big_endian)
 
         matrix_gate_little_endian.insert(0, matrix_state_little_endian[0])
@@ -64,15 +92,11 @@ class QiskitParser(Parser):
             num_qubits, grouped_gates_big_endian
         )
 
-        dirac_state_little_endian = (
-            self.format_matrix_state_for_dirac_state_json(
-                num_qubits, matrix_state_little_endian
-            )
+        dirac_state_little_endian = self.format_matrix_state_for_dirac_state_json(
+            num_qubits, matrix_state_little_endian
         )
-        dirac_state_big_endian = (
-            self.format_matrix_state_for_dirac_state_json(
-                num_qubits, matrix_state_big_endian
-            )
+        dirac_state_big_endian = self.format_matrix_state_for_dirac_state_json(
+            num_qubits, matrix_state_big_endian
         )
 
         return {
@@ -101,9 +125,11 @@ class QiskitParser(Parser):
         Returns:
             list[int, Unknown]: list containing the number of qubits in the circuit and information about its gates
         """
-        qc_string = insert_main_function_into_code_string(NUMPY_IMPORT_STRING, qc_string, QISKIT_CIRCUIT_GATE_LOOP)
+        qc_string = insert_main_function_into_code_string(
+            NUMPY_IMPORT_STRING, qc_string, QISKIT_CIRCUIT_GATE_LOOP
+        )
         return super().convert_code_string_to_circuit_object(qc_string)
-    
+
     def create_gate_information_list_for_gates(self, gate_attributes):
         """
         Creates GateInformation using gate attributes extracted from code
@@ -130,8 +156,11 @@ class QiskitParser(Parser):
                         raise HigherIndexedControlQubitError()
 
             sorted_control_target_list = control_qubit_indices + target_qubit_indices
-            for i in range(0, len(sorted_control_target_list)-1):
-                if sorted_control_target_list[i+1] - sorted_control_target_list[i] > 1:
+            for i in range(0, len(sorted_control_target_list) - 1):
+                if (
+                    sorted_control_target_list[i + 1] - sorted_control_target_list[i]
+                    > 1
+                ):
                     raise NonNeighbouringQubitsError()
 
             # Transform gate into a matrix (workaround for Qiskit 1.3)
@@ -155,17 +184,21 @@ class QiskitParser(Parser):
             num_qubits = len(qubit_indices)
             matrix_le = Operator(qc_temp).data
 
-            matrix_be = matrix_le if num_qubits == 1 else (MultiQubitMatrixInformation.get_gate_class(name)).get_big_endian()
+            matrix_be = (
+                matrix_le
+                if num_qubits == 1
+                else (MultiQubitMatrixInformation.get_gate_class(name)).get_big_endian()
+            )
 
             new_gate_information = GateInformation(
-                    name,
-                    matrix_be,
-                    matrix_le,
-                    num_qubits,
-                    control_qubit_indices,
-                    target_qubit_indices,
-                    params,
-                )
+                name,
+                matrix_be,
+                matrix_le,
+                num_qubits,
+                control_qubit_indices,
+                target_qubit_indices,
+                params,
+            )
 
             gate_information_list.append(new_gate_information)
 

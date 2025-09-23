@@ -5,6 +5,7 @@ from qiskit.circuit.library import *
 
 from errors.errors import GateNotImplementedError
 
+
 class GateNames(Enum):
     CONTROLLED_CONTROLLED_X = "CCX"
     CONTROLLED_CONTROLLED_Z = "CCZ"
@@ -58,7 +59,10 @@ class GateNames(Enum):
     Y = "Z"
     Z = "Z"
 
-def insert_main_function_into_code_string(start_main_after: str, code_string: str, output_string: str) -> str:
+
+def insert_main_function_into_code_string(
+    start_main_after: str, code_string: str, output_string: str
+) -> str:
     """
     Adds a main function and its call to the given code string.
 
@@ -81,15 +85,16 @@ def insert_main_function_into_code_string(start_main_after: str, code_string: st
             )
             end_of_imports_found = True
         elif end_of_imports_found:
-            code_string_formatted = code_string_formatted + "    "+ code_lines[i] + "\n"
+            code_string_formatted = (
+                code_string_formatted + "    " + code_lines[i] + "\n"
+            )
         else:
-            code_string_formatted = code_string_formatted + code_lines[i] + "\n"\
+            code_string_formatted = code_string_formatted + code_lines[i] + "\n"
 
-    code_string_formatted = (
-        code_string_formatted +  output_string + "\nmain()\n"
-    )
+    code_string_formatted = code_string_formatted + output_string + "\nmain()\n"
 
     return code_string_formatted
+
 
 def simplify_single_matrix(matrix: list) -> list:
     """
@@ -104,7 +109,6 @@ def simplify_single_matrix(matrix: list) -> list:
 
     for j in range(0, len(matrix)):
         for k in range(0, len(matrix[j])):
-
             real_val = float(matrix[j][k].real)
             imag_val = float(matrix[j][k].imag)
 
@@ -117,6 +121,7 @@ def simplify_single_matrix(matrix: list) -> list:
             else:
                 matrix[j][k] = "{:.2f}".format(real_val + imag_val) + "i"
     return matrix
+
 
 def simplify_values_state_vector(state_vector: list) -> list:
     """
@@ -136,7 +141,6 @@ def simplify_values_state_vector(state_vector: list) -> list:
         if real_val == 0.0 and imag_val == 0.0:
             state_vector[i][0] = 0.0
         elif round(imag_val, 4) == 0.0:
-
             state_vector[i][0] = float(round(real_val, 2))
         elif round(imag_val, 4) == 1.0:
             state_vector[i][0] = "i"
@@ -144,6 +148,7 @@ def simplify_values_state_vector(state_vector: list) -> list:
             state_vector[i][0] = str(round(real_val, 2)) + str(round(imag_val, 2)) + "i"
 
     return state_vector
+
 
 def get_control_and_target_qubit_indices(gate_name: str, indices: list) -> list:
     """
@@ -178,6 +183,7 @@ def get_control_and_target_qubit_indices(gate_name: str, indices: list) -> list:
 
     return control_qubit_indices, target_qubit_indices
 
+
 def convert_line_qubits_to_ints(qubit_indices: list) -> list:
     """
     Converts a list of Cirq LineQubit objects into a list of ints
@@ -195,8 +201,8 @@ def convert_line_qubits_to_ints(qubit_indices: list) -> list:
 
     return qubit_indices_list
 
-def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list =[]) -> Gate:
 
+def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list = []) -> Gate:
     gate_name = gate_name.upper()
 
     match gate_name:
@@ -297,26 +303,44 @@ def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list =[]) -> G
         case _:
             raise GateNotImplementedError
 
-QISKIT_CIRCUIT_GATE_LOOP = '''    gate_list = []\n
+
+QISKIT_CIRCUIT_GATE_LOOP = """    gate_list = []\n
     for gate in qc.data:\n
         qubit_indices = [qc.find_bit(q).index for q in gate.qubits]\n
         gate_list.append({"name": gate.name, "qubit_indices": qubit_indices, "params": gate.params})\n
-    print([qc.num_qubits, gate_list])\n'''
+    print([qc.num_qubits, gate_list])\n"""
 
-PENNYLANE_CIRCUIT_GATE_LOOP = '''\ngate_list = []\n
+PENNYLANE_CIRCUIT_GATE_LOOP = """\ngate_list = []\n
 for op in qc._tape.operations:\n
     gate_list.append({"name": op.name, "wires": op.wires.tolist(), "params": op.parameters, "matrix": op.matrix()})\n
-print([len(dev.wires.tolist()), gate_list])\n'''
+print([len(dev.wires.tolist()), gate_list])\n"""
 
-CIRQ_CIRCUIT_GATE_LOOP = '''\n    gate_list = []\n
+CIRQ_CIRCUIT_GATE_LOOP = """\n    gate_list = []\n
     for gate in circuit.all_operations():\n
         gate_list.append({"name": str(gate.gate), "qubit_indices": gate.qubits, "params": cirq.parameter_names(gate.gate), "matrix": cirq.unitary(gate.gate)})\n
-    print([len(circuit.all_qubits()), gate_list])'''
+    print([len(circuit.all_qubits()), gate_list])"""
 
 IDENTITY_MATRIX = np.array([[1, 0], [0, 1]])
 
-CONTROL_TARGET_GATE_NAMES = [ GateNames.CONTROLLED_HADAMARD.value, GateNames.CONTROLLED_PHASE.value, GateNames.CONTROLLED_ROTAIONAL_X.value, GateNames.CONTROLLED_ROTAIONAL_Y.value, GateNames.CONTROLLED_ROTAIONAL_Z.value,GateNames.CONTROLLED_S.value, GateNames.CONTROLLED_S_DAGGER.value, GateNames.CONTROLLED_SQUARED_X.value, GateNames.CONTROLLED_X.value, GateNames.CONTROLLED_Y.value, GateNames.CONTROLLED_Z.value, GateNames.CONTROLLED_U.value]
-CONTROL_CONTROL_TARGET_GATE_NAMES = [GateNames.CONTROLLED_CONTROLLED_X.value, GateNames.CONTROLLED_CONTROLLED_Z.value, GateNames.RELATIVE_PHASE_CONTROLLED_CONTROLLED_X.value]
+CONTROL_TARGET_GATE_NAMES = [
+    GateNames.CONTROLLED_HADAMARD.value,
+    GateNames.CONTROLLED_PHASE.value,
+    GateNames.CONTROLLED_ROTAIONAL_X.value,
+    GateNames.CONTROLLED_ROTAIONAL_Y.value,
+    GateNames.CONTROLLED_ROTAIONAL_Z.value,
+    GateNames.CONTROLLED_S.value,
+    GateNames.CONTROLLED_S_DAGGER.value,
+    GateNames.CONTROLLED_SQUARED_X.value,
+    GateNames.CONTROLLED_X.value,
+    GateNames.CONTROLLED_Y.value,
+    GateNames.CONTROLLED_Z.value,
+    GateNames.CONTROLLED_U.value,
+]
+CONTROL_CONTROL_TARGET_GATE_NAMES = [
+    GateNames.CONTROLLED_CONTROLLED_X.value,
+    GateNames.CONTROLLED_CONTROLLED_Z.value,
+    GateNames.RELATIVE_PHASE_CONTROLLED_CONTROLLED_X.value,
+]
 
 CONTROL = "CONTROL"
 TARGET = "TARGET"

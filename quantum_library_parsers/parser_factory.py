@@ -3,12 +3,9 @@ from .pennylane_parser import PennylaneParser
 from .cirq_parser import CirqParser
 from . import Parser
 
+
 class ParserFactory:
-    parsers = {
-        "qiskit": QiskitParser,
-        "pennylane": PennylaneParser,
-        "cirq": CirqParser
-    }
+    parsers = {"qiskit": QiskitParser, "pennylane": PennylaneParser, "cirq": CirqParser}
 
     @staticmethod
     def get_parser(qc_type: str) -> Parser:

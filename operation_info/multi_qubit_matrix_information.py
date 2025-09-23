@@ -1,7 +1,7 @@
 from abc import ABC
 
-class MultiQubitMatrixInformation(ABC):
 
+class MultiQubitMatrixInformation(ABC):
     registry = {}
 
     def __init_subclass__(cls, **kwargs):

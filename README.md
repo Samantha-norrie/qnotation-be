@@ -7,7 +7,7 @@ QNotation is available at [https://qnotation.vercel.app/](https://qnotation.verc
 ### 1. Inputting your quantum circuit into QNotation
 QNotation takes in [Qiskit](https://www.ibm.com/quantum/qiskit) [quantum circuit objects](https://docs.quantum.ibm.com/api/qiskit/qiskit.circuit.QuantumCircuit), which are inputted through the code editor on the right side of the app.
 Here are some points to keep in mind while creating your quantum circuits for QNotation:
-- quantum gates must be appended to the ```qc``` variable below the ```Insert code below``` comment. 
+- quantum gates must be appended to the ```qc``` variable below the ```Insert code below``` comment.
 - quantum circuits with 1 to 5 qubits can be run in the app. To change the number of qubits used in your circuit, modify the qubit argument on the following line: ```qc = QuantumCircuit(3)```
 - measurement and classical operations are currently not supported
 - Neighbouring qubits must be used for multi-qubit gates.
@@ -23,7 +23,7 @@ Example input can be found in the *EXAMPLES* dropdown.
 ### 2. Interpreting notation data
 QNotation contains interactive visualizations for circuit, Dirac, and matrix. Clicking on different sections of a notation will reveal its equivalent sections in the other notations (in orange). The quantum state after the selected sections is shown on the right of the Dirac and matrix visualization subsections.
 
-#### 2.1 Additional features for exploring 
+#### 2.1 Additional features for exploring
 A couple of toggles have been included on the bottom right of the app:
 - **Little endian (LE) toggle**: allows for toggling between little endian and big endian ordering
 - **Tensor (⊗) toggle**: allows matrix notation visualization to be broken down into tensor products (for quantum circuits with 3 qubits or less)

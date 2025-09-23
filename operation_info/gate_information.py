@@ -1,7 +1,7 @@
 import numpy as np
 
-class GateInformation:
 
+class GateInformation:
     def __init__(
         self,
         name: str,
@@ -12,7 +12,6 @@ class GateInformation:
         target_qubit_indices: list[int] = [],
         params=[],
     ) -> None:
-
         self._name = name
         self._matrix_be = matrix_be
         self._matrix_le = matrix_le
@@ -21,9 +20,9 @@ class GateInformation:
         self._target_qubit_indices = target_qubit_indices
         self._params = params
 
-    def __str__(self): 
+    def __str__(self):
         return f"GateInformation(name='{self._name}', matrix_be={self._matrix_be}, matrix_le={self._matrix_le}, num_qubits={self._num_qubits}, control_qubit_indices={self._control_qubit_indices}, target_qubit_indices={self._target_qubit_indices}, params={self._params} )"
-    
+
     def __repr__(self):
         return self.__str__()
 
@@ -32,7 +31,7 @@ class GateInformation:
 
     def get_matrix_be(self) -> np.ndarray:
         return self._matrix_be
-    
+
     def get_matrix_le(self) -> np.ndarray:
         return self._matrix_le
 
