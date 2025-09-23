@@ -4,7 +4,6 @@ import subprocess
 import tempfile
 import sys
 import os
-import copy
 import numpy as np
 from numpy import array
 import pennylane as qml
@@ -55,7 +54,7 @@ class Parser(ABC):
             )
             output = eval(result.stdout, {"qml": qml, "array": array, "cirq": cirq})
 
-        except Exception as e:
+        except Exception:
             raise InputError
         finally:
             os.remove(temp_file_name)

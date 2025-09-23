@@ -30,6 +30,9 @@ PENNYLANE_BELL_STATE_THREE_QUBITS = 'import pennylane as qml\nimport numpy as np
 # CIRQ INPUTS
 CIRQ_TYPO = "import cirq\nimport numpy as np\nqubit0 = cirq.LineQubit(0)\ncircuit = cirq.Circuit()\ncircit.append([cirq.H(qubit0)])"
 CIRQ_SINGLE_QUBIT_SINGLE_HADAMARD = "import cirq\nimport numpy as np\nqubit0 = cirq.LineQubit(0)\ncircuit = cirq.Circuit()\ncircuit.append([cirq.H(qubit0)])"
+CIRQ_SINGLE_COLUMN_TWO_QUBIT_NEIGHBOURING_GATE = "import cirq\nimport numpy as np\nq0, q1 = cirq.LineQubit.range(2)\ncircuit = cirq.Circuit(cirq.CNOT(q0, q1))"
+CIRQ_BELL_STATE_THREE_QUBITS = "import cirq\nimport numpy as np\nq0, q1, q2 = cirq.LineQubit.range(3)\ncircuit = cirq.Circuit(cirq.H(q0),cirq.CNOT(q0, q1))"
+CIRQ_NON_NEIGHBOURING_QUBITS = "import cirq\nimport numpy as np\nq0, q1, q2 = cirq.LineQubit.range(3)\ncircuit = cirq.Circuit(cirq.H(q0),cirq.CNOT(q0, q2))"
 
 URL = "http://127.0.0.1:8000/notation_data"
 HEADERS = {"Content-Type": "application/json"}
