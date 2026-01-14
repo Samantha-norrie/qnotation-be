@@ -133,7 +133,9 @@ class PennylaneParser(Parser):
         gate_information_list = []
 
         for gate in gate_attributes:
+            print(gate["name"].lower())
             name = get_gate_acronym(gate["name"].lower())
+            print("found name", name)
             qubit_indices = gate["wires"]
             params = gate["params"]
             matrix_be = gate["matrix"]
@@ -160,9 +162,9 @@ class PennylaneParser(Parser):
             if num_qubits == 1:
                 matrix_le = matrix_be
             else:
-                matrix_le = (
-                    MultiQubitMatrixInformation.get_gate_class(name)
-                ).get_little_endian()
+                gate_class = MultiQubitMatrixInformation.get_gate_class(name)
+                matrix_le = gate_class.get_little_endian(params) if len(params) > 0 else gate_class.get_little_endian()
+                matrix_be = gate_class.get_big_endian(params) if len(params) > 0 else gate_class.get_big_endian()
 
             new_gate_information = GateInformation(
                 name,

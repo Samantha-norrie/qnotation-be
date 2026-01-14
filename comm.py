@@ -53,6 +53,7 @@ def notation_data():
         message = MESSAGE_UNKNOWN_ERROR
         status = 500
 
+    print("before json")
     json_to_return = jsonify(
         {
             "matrix_gate_little_endian": matrix_gate_little_endian,
@@ -70,6 +71,8 @@ def notation_data():
             "status": status,
         }
     )
+
+    print("JSON", json_to_return)
 
     return json_to_return
 

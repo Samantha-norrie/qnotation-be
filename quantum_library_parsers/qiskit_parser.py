@@ -64,6 +64,8 @@ class QiskitParser(Parser):
             num_qubits, matrix_gate_big_endian
         )
 
+        matrix_gate_tensor_little_endian = None
+        matrix_gate_tensor_big_endian = None
         if num_qubits <= MAX_NUM_QUBITS_FOR_TENSOR:
             matrix_gate_tensor_little_endian = (
                 self.create_tensor_product_matrix_gate_json(
@@ -99,7 +101,7 @@ class QiskitParser(Parser):
             num_qubits, matrix_state_big_endian
         )
 
-        return {
+        x = {
             "matrix_gate_little_endian": matrix_gate_little_endian,
             "matrix_gate_big_endian": matrix_gate_big_endian,
             "matrix_gate_tensor_little_endian": matrix_gate_tensor_little_endian,
@@ -114,6 +116,8 @@ class QiskitParser(Parser):
             "message": "",
             "status": 200,
         }
+        print(x)
+        return x
 
     def convert_code_string_to_circuit_object(self, qc_string):
         """
@@ -145,6 +149,7 @@ class QiskitParser(Parser):
             name = get_gate_acronym(gate["name"])
             qubit_indices = gate["qubit_indices"]
             params = gate["params"]
+            print("qiskit params", params)
 
             control_qubit_indices, target_qubit_indices = (
                 get_control_and_target_qubit_indices(name, qubit_indices)
@@ -184,11 +189,12 @@ class QiskitParser(Parser):
             num_qubits = len(qubit_indices)
             matrix_le = Operator(qc_temp).data
 
-            matrix_be = (
-                matrix_le
-                if num_qubits == 1
-                else (MultiQubitMatrixInformation.get_gate_class(name)).get_big_endian()
-            )
+            if num_qubits == 1:
+                matrix_be = matrix_le
+            else:
+                gate_class = MultiQubitMatrixInformation.get_gate_class(name)
+                matrix_le = gate_class.get_little_endian(params) if len(params) > 0 else gate_class.get_little_endian()
+                matrix_be = gate_class.get_big_endian(params) if len(params) > 0 else gate_class.get_big_endian()
 
             new_gate_information = GateInformation(
                 name,

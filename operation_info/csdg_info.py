@@ -1,11 +1,13 @@
 import numpy as np
 from .multi_qubit_matrix_information import MultiQubitMatrixInformation
-
+from quantum_library_parsers.parser_utils import GateNames
+from .operation_info_utils import gate_aliases
 
 class CSDGInfo(MultiQubitMatrixInformation):
-    names = ["csdg", "controlled-s-dagger"]
+    names = gate_aliases[GateNames.CONTROLLED_S_DAGGER.value]
 
-    def get_big_endian(self):
+    @staticmethod
+    def get_big_endian():
         return np.array(
             [
                 [1.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],
@@ -16,7 +18,8 @@ class CSDGInfo(MultiQubitMatrixInformation):
             dtype=complex,
         )
 
-    def get_little_endian(self):
+    @staticmethod
+    def get_little_endian():
         return np.array(
             [
                 [1.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],

@@ -1,3 +1,4 @@
+import re
 from . import Parser
 from errors.errors import (
     HigherIndexedControlQubitError,
@@ -8,10 +9,11 @@ from .parser_utils import (
     get_control_and_target_qubit_indices,
     insert_main_function_into_code_string,
     convert_line_qubits_to_ints,
+    normalize_cirq_gate_name,
     CIRQ_CIRCUIT_GATE_LOOP,
     MAX_NUM_QUBITS_FOR_TENSOR,
     MAX_NUM_QUBITS_FOR_APP,
-    NUMPY_IMPORT_STRING,
+    NUMPY_IMPORT_STRING
 )
 from operation_info.multi_qubit_matrix_information import MultiQubitMatrixInformation
 from operation_info.gate_information import GateInformation
@@ -32,6 +34,7 @@ class CirqParser(Parser):
         num_qubits, gate_attributes = self.convert_code_string_to_circuit_object(
             qc_string
         )
+        print(gate_attributes)
 
         if num_qubits > MAX_NUM_QUBITS_FOR_APP:
             raise TooManyQubitsError()
@@ -136,8 +139,11 @@ class CirqParser(Parser):
             list[GateInformation]: list containing GateInformation objects describing the given circuit
         """
         gate_information_list = []
+        
         for gate in gate_attributes:
-            name = get_gate_acronym(gate["name"])
+            print("before", gate["name"])
+            name = get_gate_acronym(normalize_cirq_gate_name(gate["name"]))
+            print("name after", name)
             qubit_indices = convert_line_qubits_to_ints(gate["qubit_indices"])
             params = gate["params"]
             matrix_be = gate["matrix"]
@@ -164,9 +170,9 @@ class CirqParser(Parser):
             if num_qubits == 1:
                 matrix_le = matrix_be
             else:
-                matrix_le = (
-                    MultiQubitMatrixInformation.get_gate_class(name)
-                ).get_little_endian()
+                gate_class = MultiQubitMatrixInformation.get_gate_class(name)
+                matrix_le = gate_class.get_little_endian(params) if len(params) > 0 else gate_class.get_little_endian()
+                matrix_be = gate_class.get_big_endian(params) if len(params) > 0 else gate_class.get_big_endian()
 
             new_gate_information = GateInformation(
                 name,

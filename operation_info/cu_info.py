@@ -2,16 +2,18 @@ import numpy as np
 import math
 import cmath
 from .multi_qubit_matrix_information import MultiQubitMatrixInformation
-
+from quantum_library_parsers.parser_utils import GateNames
+from .operation_info_utils import gate_aliases
 
 class CUInfo(MultiQubitMatrixInformation):
-    names = ["cu", "controlled-u"]
+    names = gate_aliases[GateNames.CONTROLLED_U.value]
 
-    def get_big_endian(self, params):
-        theta = params.theta
-        phi = params.phi
-        lam = params.lam
-        gamma = params.gamma
+    @staticmethod
+    def get_big_endian(params):
+        theta = params[0]
+        phi = params[1]
+        lam = params[2]
+        gamma = params[3]
         return np.array(
             [
                 [1.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],
@@ -32,11 +34,12 @@ class CUInfo(MultiQubitMatrixInformation):
             dtype=complex,
         )
 
-    def get_little_endian(self, params):
-        theta = params.theta
-        phi = params.phi
-        lam = params.lam
-        gamma = params.gamma
+    @staticmethod
+    def get_little_endian(params):
+        theta = params[0]
+        phi = params[1]
+        lam = params[2]
+        gamma = params[3]
         return np.array(
             [
                 [1.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],

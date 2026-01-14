@@ -1,3 +1,4 @@
+import re
 from enum import Enum
 import numpy as np
 from qiskit.circuit import Gate
@@ -5,15 +6,21 @@ from qiskit.circuit.library import *
 
 from errors.errors import GateNotImplementedError
 
-
 class GateNames(Enum):
+    CONTROLLED_CONTROLLED_CONTROLLED_CONTROLLED_X = "C4X" #TODO
+    CONTROLLED_CONTROLLED_CONTROLLED_SX = "C3SX" #TODO
+    CONTROLLED_CONTROLLED_CONTROLLED_X = "C3X" #TODO
     CONTROLLED_CONTROLLED_X = "CCX"
     CONTROLLED_CONTROLLED_Z = "CCZ"
     CONTROLLED_HADAMARD = "CH"
     CONTROLLED_PHASE = "CP"
-    CONTROLLED_ROTAIONAL_X = "CRX"
-    CONTROLLED_ROTAIONAL_Y = "CRY"
-    CONTROLLED_ROTAIONAL_Z = "CRZ"
+    CONTROLLED_PHASE_00 = "CP00"
+    CONTROLLED_PHASE_01 = "CP01"
+    CONTROLLED_PHASE_10 = "CP10"
+    CONTROLLED_ROTATIONAL = "CROT"
+    CONTROLLED_ROTATIONAL_X = "CRX"
+    CONTROLLED_ROTATIONAL_Y = "CRY"
+    CONTROLLED_ROTATIONAL_Z = "CRZ"
     CONTROLLED_S_DAGGER = "CSDG"
     CONTROLLED_S = "CS"
     CONTROLLED_SWAP = "CSWAP"
@@ -22,16 +29,23 @@ class GateNames(Enum):
     CONTROLLED_X = "CX"
     CONTROLLED_Y = "CY"
     CONTROLLED_Z = "CZ"
-    DOUBLE_CONTROLLED_X = "DCCZ"
+    DOUBLE_CONTROLLED_X = "DCX"
     DIAGONAL = "D"
+    ECR = "ECR"
     GLOBAL_PHASE = "GP"
     HADAMARD = "H"
     IDENTITY = "ID"
+    ISING_XX = "ISINGXX"
+    ISING_XY = "ISINGXY"
+    ISING_YY = "ISINGYY"
+    ISING_ZZ = "ISINGZZ"
+    ISWAP = "ISWAP"
     MULTI_CONTROLLED_MULTI_TARGET = "MCMT"
     MULTI_CONTROLLED_PHASE = "MCP"
     MULTI_CONTROLLED_X = "MCX"
     PERMUTATION = "PERMU"
     PHASE = "P"
+    PSWAP = "PSWAP"
     QUANTUM_FOURIER_TRANSFORM = "QFT"
     RELATIVE_PHASE_CONTROLLED_CONTROLLED_X = "RCCX"
     ROTATIONAL = "R"
@@ -45,20 +59,21 @@ class GateNames(Enum):
     ROTATIONAL_Z_Z = "RZZ"
     S_DAGGER = "SDG"
     S = "S"
+    SISWAP = "SISWAP"
     SWAP = "SWAP"
     SQUARED_X_DAGGER = "SXDG"
     SQUARED_X = "SX"
     T_ADJOINT = "TDG"
     T = "T"
+    TOFFOLI = "TOFFOLI"
     U = "U"
     UNIFORMLY_CONTROLLED = "UC"
     UNITARY = "UNITARY"
     X = "X"
     X_X_MINUS_Y_Y = "XX-YY"
     X_X_PLUS_Y_Y = "XX+YY"
-    Y = "Z"
+    Y = "Y"
     Z = "Z"
-
 
 def insert_main_function_into_code_string(
     start_main_after: str, code_string: str, output_string: str
@@ -201,11 +216,20 @@ def convert_line_qubits_to_ints(qubit_indices: list) -> list:
 
     return qubit_indices_list
 
+def normalize_cirq_gate_name(s: str) -> str:
+    m = re.match(r'^([A-Za-z]+)\s*\(.*\)$', s)
+    return m.group(1) if m else s
 
 def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list = []) -> Gate:
     gate_name = gate_name.upper()
 
     match gate_name:
+        case GateNames.CONTROLLED_CONTROLLED_CONTROLLED_CONTROLLED_X.value:
+            return C4XGate()
+        case GateNames.CONTROLLED_CONTROLLED_CONTROLLED_SX.value:
+            return C3SXGate()
+        case GateNames.CONTROLLED_CONTROLLED_CONTROLLED_X.value:
+            return C3XGate()
         case GateNames.CONTROLLED_CONTROLLED_X.value:
             return CCXGate()
         case GateNames.CONTROLLED_CONTROLLED_Z.value:
@@ -214,11 +238,11 @@ def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list = []) -> 
             return CHGate()
         case GateNames.CONTROLLED_PHASE.value:
             return CPhaseGate(params[0])
-        case GateNames.CONTROLLED_ROTAIONAL_X.value:
+        case GateNames.CONTROLLED_ROTATIONAL_X.value:
             return CRXGate(params[0])
-        case GateNames.CONTROLLED_ROTAIONAL_Y.value:
+        case GateNames.CONTROLLED_ROTATIONAL_Y.value:
             return CRYGate(params[0])
-        case GateNames.CONTROLLED_ROTAIONAL_Z.value:
+        case GateNames.CONTROLLED_ROTATIONAL_Z.value:
             return CRZGate(params[0])
         case GateNames.CONTROLLED_S_DAGGER.value:
             return CSdgGate()
@@ -226,6 +250,8 @@ def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list = []) -> 
             return CSGate()
         case GateNames.CONTROLLED_SQUARED_X.value:
             return CSXGate()
+        case GateNames.CONTROLLED_SWAP.value:
+            return CSwapGate()
         case GateNames.CONTROLLED_U.value:
             return CUGate(params[0], params[1], params[2], params[3])
         case GateNames.CONTROLLED_X.value:
@@ -238,12 +264,18 @@ def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list = []) -> 
             return DCXGate()
         case GateNames.DIAGONAL.value:
             return DiagonalGate(params[0])
+        case GateNames.DOUBLE_CONTROLLED_X.value:
+            return DCXGate()
+        case GateNames.ECR.value:
+            return ECRGate()
         case GateNames.GLOBAL_PHASE.value:
             return GlobalPhaseGate(params[0])
         case GateNames.HADAMARD.value:
             return HGate()
         case GateNames.IDENTITY.value:
             return IGate()
+        case GateNames.ISWAP.value:
+            return iSwapGate()
         case GateNames.MULTI_CONTROLLED_MULTI_TARGET.value:
             return MCMTGate()
         case GateNames.MULTI_CONTROLLED_PHASE.value:
@@ -261,7 +293,7 @@ def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list = []) -> 
         case GateNames.ROTATIONAL.value:
             return RGate(params[0], params[1])
         case GateNames.ROTATIONAL_V.value:
-            return RVGate(params[0], params[1], params[2])
+            return RVGate(params[0], params[1], params[2], params[3])
         case GateNames.ROTATIONAL_X.value:
             return RXGate(params[0])
         case GateNames.ROTATIONAL_X_X.value:
@@ -282,6 +314,10 @@ def get_qiskit_gate_object_from_gate_name(gate_name: str, params: list = []) -> 
             return SdgGate()
         case GateNames.SWAP.value:
             return SwapGate()
+        case GateNames.SQUARED_X_DAGGER.value:
+            return SXdgGate()
+        case GateNames.SQUARED_X.value:
+            return SXGate()
         case GateNames.T.value:
             return TGate()
         case GateNames.T_ADJOINT.value:
@@ -325,9 +361,13 @@ IDENTITY_MATRIX = np.array([[1, 0], [0, 1]])
 CONTROL_TARGET_GATE_NAMES = [
     GateNames.CONTROLLED_HADAMARD.value,
     GateNames.CONTROLLED_PHASE.value,
-    GateNames.CONTROLLED_ROTAIONAL_X.value,
-    GateNames.CONTROLLED_ROTAIONAL_Y.value,
-    GateNames.CONTROLLED_ROTAIONAL_Z.value,
+    GateNames.CONTROLLED_PHASE_00.value,
+    GateNames.CONTROLLED_PHASE_01.value,
+    GateNames.CONTROLLED_PHASE_10.value,
+    GateNames.CONTROLLED_ROTATIONAL.value,
+    GateNames.CONTROLLED_ROTATIONAL_X.value,
+    GateNames.CONTROLLED_ROTATIONAL_Y.value,
+    GateNames.CONTROLLED_ROTATIONAL_Z.value,
     GateNames.CONTROLLED_S.value,
     GateNames.CONTROLLED_S_DAGGER.value,
     GateNames.CONTROLLED_SQUARED_X.value,
@@ -335,11 +375,24 @@ CONTROL_TARGET_GATE_NAMES = [
     GateNames.CONTROLLED_Y.value,
     GateNames.CONTROLLED_Z.value,
     GateNames.CONTROLLED_U.value,
+    GateNames.DIAGONAL.value,
+    GateNames.DOUBLE_CONTROLLED_X.value,
+    GateNames.ECR.value,
+    GateNames.ISING_XX.value,
+    GateNames.ISING_XY.value,
+    GateNames.ISING_YY.value,
+    GateNames.ISING_ZZ.value,
+    GateNames.ISWAP.value,
+    GateNames.PSWAP.value,
+    GateNames.SWAP.value,
+    GateNames.SISWAP.value
 ]
 CONTROL_CONTROL_TARGET_GATE_NAMES = [
     GateNames.CONTROLLED_CONTROLLED_X.value,
     GateNames.CONTROLLED_CONTROLLED_Z.value,
+    GateNames.CONTROLLED_SWAP.value,
     GateNames.RELATIVE_PHASE_CONTROLLED_CONTROLLED_X.value,
+    GateNames.TOFFOLI.value
 ]
 
 CONTROL = "CONTROL"

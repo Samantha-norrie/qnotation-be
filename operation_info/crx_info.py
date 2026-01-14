@@ -1,13 +1,15 @@
 import numpy as np
 import math
 from .multi_qubit_matrix_information import MultiQubitMatrixInformation
-
+from quantum_library_parsers.parser_utils import GateNames
+from .operation_info_utils import gate_aliases
 
 class CRXInfo(MultiQubitMatrixInformation):
-    names = ["crx", "controlled-rotational-x", "controlled-rx"]
+    names = gate_aliases[GateNames.CONTROLLED_ROTATIONAL_X.value]
 
-    def get_big_endian(self, params):
-        theta = params.theta
+    @staticmethod
+    def get_big_endian(params):
+        theta = params[0]
         return np.array(
             [
                 [1.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],
@@ -28,8 +30,9 @@ class CRXInfo(MultiQubitMatrixInformation):
             dtype=complex,
         )
 
-    def get_little_endian(self, params):
-        theta = params.theta
+    @staticmethod
+    def get_little_endian(params):
+        theta = params[0]
         return np.array(
             [
                 [1.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],

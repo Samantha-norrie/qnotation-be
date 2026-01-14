@@ -1,18 +1,19 @@
 import numpy as np
 from .multi_qubit_matrix_information import MultiQubitMatrixInformation
+from quantum_library_parsers.parser_utils import GateNames
+from .operation_info_utils import gate_aliases
 
+class CZInfo(MultiQubitMatrixInformation):
+    names = gate_aliases[GateNames.CONTROLLED_Z.value]
 
-class CXInfo(MultiQubitMatrixInformation):
-    names = ["cz", "controlled-z"]
-
-    @classmethod
-    def get_big_endian(cls):
+    @staticmethod
+    def get_big_endian():
         return np.array(
             [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]], dtype=complex
         )
 
-    @classmethod
-    def get_little_endian(cls):
+    @staticmethod
+    def get_little_endian():
         return np.array(
             [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, -1]], dtype=complex
         )

@@ -323,6 +323,7 @@ class Parser(ABC):
                 current_qubit_in_column = grouped_gates[i][j]
 
                 if type(current_qubit_in_column) == GateInformation:
+                    print(current_qubit_in_column)
                     content.append(
                         {
                             "gate": current_qubit_in_column.get_name().upper(),

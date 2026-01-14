@@ -1,11 +1,13 @@
 import numpy as np
 from .multi_qubit_matrix_information import MultiQubitMatrixInformation
-
+from quantum_library_parsers.parser_utils import GateNames
+from .operation_info_utils import gate_aliases
 
 class CCXInfo(MultiQubitMatrixInformation):
-    names = ["ccx", "ccnot", "controlled-controlled-x"]
+    names = gate_aliases[GateNames.CONTROLLED_CONTROLLED_X.value]
 
-    def get_big_endian(self):
+    @staticmethod
+    def get_big_endian():
         return np.array(
             [
                 [
@@ -92,7 +94,8 @@ class CCXInfo(MultiQubitMatrixInformation):
             dtype=complex,
         )
 
-    def get_little_endian(self):
+    @staticmethod
+    def get_little_endian():
         return np.array(
             [
                 [1 + 0j, 0 + 0j, 0 + 0j, 0 + 0j, 0 + 0j, 0 + 0j, 0 + 0j, 0 + 0j],
