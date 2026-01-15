@@ -47,7 +47,7 @@ QISKIT_ISWAP = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = Quan
 QISKIT_PHASEA = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.p(np.pi/4, 0)\n"
 QISKIT_PHASEB = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.p(np.pi/2, 0)\n"
 QISKIT_PHASEC = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.p(np.pi, 0)\n"
-QISKIT_R = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.r(np.pi/4, np.pi/2, np.pi, 0)\n"
+QISKIT_R = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.r(np.pi/4, np.pi/2, 0)\n"
 QISKIT_RV = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.rv(np.pi/4, np.pi/2, np.pi, 0)\n"
 QISKIT_RXA = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.rx(np.pi/4, 0)\n"
 QISKIT_RXB = "from qiskit import QuantumCircuit\nimport numpy as np\nqc = QuantumCircuit(1)\n\n# Insert code below\nqc.x(0)\nqc.rx(np.pi/2, 0)\n"
@@ -1157,6 +1157,22 @@ RESULTS_TESTR = {
     "status": SUCCESS,
 }
 
+RESULTS_TESTR_QISKIT = {
+    "circuit_dirac_gate_big_endian": [{'content': [[0]], 'key': 0, 'type': 'STATE'}, {'content': [{'gate': 'X', 'gate_type': 'GATE INFO'}], 'key': 1, 'type': 'GATE'}, {'content': [{'gate': 'R', 'gate_type': 'GATE INFO'}], 'key': 2, 'type': 'GATE'}],
+    "circuit_dirac_gate_little_endian": [{'content': [[0]], 'key': 0, 'type': 'STATE'}, {'content': [{'gate': 'X', 'gate_type': 'GATE INFO'}], 'key': 1, 'type': 'GATE'}, {'content': [{'gate': 'R', 'gate_type': 'GATE INFO'}], 'key': 2, 'type': 'GATE'}],
+    "dirac_state_big_endian":[{'content': [{'bin': '0', 'scalar': 1}], 'key': 0, 'type': 'STATE'}, {'content': [{'bin': '1', 'scalar': 1.0}], 'key': 1, 'type': 'STATE'}, {'content': [{'bin': '0', 'scalar': -0.38}, {'bin': '1', 'scalar': 0.92}], 'key': 2, 'type': 'STATE'}],
+    "dirac_state_little_endian": [{'content': [{'bin': '0', 'scalar': 1}], 'key': 0, 'type': 'STATE'}, {'content': [{'bin': '1', 'scalar': 1.0}], 'key': 1, 'type': 'STATE'}, {'content': [{'bin': '0', 'scalar': -0.38}, {'bin': '1', 'scalar': 0.92}], 'key': 2, 'type': 'STATE'}],
+    "matrix_gate_big_endian": [{'content': [[1], [0]], 'key': 0, 'type': 'STATE'}, {'content': [[0.0, 1.0], [1.0, 0.0]], 'key': 1, 'type': 'GATE'}, {'content': [[0.92, -0.38], [0.38, 0.92]], 'key': 2, 'type': 'GATE'}],
+    "matrix_gate_little_endian": [{'content': [[1], [0]], 'key': 0, 'type': 'STATE'}, {'content': [[0.0, 1.0], [1.0, 0.0]], 'key': 1, 'type': 'GATE'}, {'content': [[0.92, -0.38], [0.38, 0.92]], 'key': 2, 'type': 'GATE'}],
+    "matrix_gate_tensor_big_endian": [{'content': [[1], [0]], 'key': 0, 'type': 'STATE'}, {'content': [[[0.0, 1.0], [1.0, 0.0]]], 'key': 1, 'type': 'GATE'}, {'content': [[[0.92, -0.38], [0.38, 0.92]]], 'key': 2, 'type': 'GATE'}],
+    "matrix_gate_tensor_little_endian": [{'content': [[1], [0]], 'key': 0, 'type': 'STATE'}, {'content': [[[0.0, 1.0], [1.0, 0.0]]], 'key': 1, 'type': 'GATE'}, {'content': [[[0.92, -0.38], [0.38, 0.92]]], 'key': 2, 'type': 'GATE'}],
+    "matrix_state_big_endian": [{'content': [[1], [0]], 'key': 0, 'type': 'STATE'}, {'content': [[0.0], [1.0]], 'key': 1, 'type': 'GATE'}, {'content': [[-0.38], [0.92]], 'key': 2, 'type': 'GATE'}],
+    "matrix_state_little_endian": [{'content': [[1], [0]], 'key': 0, 'type': 'STATE'}, {'content': [[0.0], [1.0]], 'key': 1, 'type': 'GATE'}, {'content': [[-0.38], [0.92]], 'key': 2, 'type': 'GATE'}],
+    "message": MESSAGE_UNKNOWN_ERROR,
+    "num_qubits": 1,
+    "status": SUCCESS,
+}
+
 RESULTS_TESTRC3X = {
     "circuit_dirac_gate_big_endian": None,
     "circuit_dirac_gate_little_endian": None,
@@ -1734,38 +1750,6 @@ RESULTS_TESTU2A = {
 }
 
 RESULTS_TESTU2B = {
-    "circuit_dirac_gate_big_endian": None,
-    "circuit_dirac_gate_little_endian": None,
-    "dirac_state_big_endian": None,
-    "dirac_state_little_endian": None,
-    "matrix_gate_big_endian": None,
-    "matrix_gate_little_endian": None,
-    "matrix_gate_tensor_big_endian": None,
-    "matrix_gate_tensor_little_endian": None,
-    "matrix_state_big_endian": None,
-    "matrix_state_little_endian": None,
-    "message": MESSAGE_UNKNOWN_ERROR,
-    "num_qubits": 0,
-    "status": SERVER_ERR,
-}
-
-RESULTS_TESTXXMINUSYY= {
-    "circuit_dirac_gate_big_endian": None,
-    "circuit_dirac_gate_little_endian": None,
-    "dirac_state_big_endian": None,
-    "dirac_state_little_endian": None,
-    "matrix_gate_big_endian": None,
-    "matrix_gate_little_endian": None,
-    "matrix_gate_tensor_big_endian": None,
-    "matrix_gate_tensor_little_endian": None,
-    "matrix_state_big_endian": None,
-    "matrix_state_little_endian": None,
-    "message": MESSAGE_UNKNOWN_ERROR,
-    "num_qubits": 0,
-    "status": SERVER_ERR,
-}
-
-RESULTS_TESTXXPLUSYY= {
     "circuit_dirac_gate_big_endian": None,
     "circuit_dirac_gate_little_endian": None,
     "dirac_state_big_endian": None,

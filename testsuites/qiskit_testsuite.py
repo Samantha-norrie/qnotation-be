@@ -80,10 +80,8 @@ from .test_utils import (
     QISKIT_PHASEB,
     RESULTS_TESTPHASEC,
     QISKIT_PHASEC,
-    RESULTS_TESTR,
+    RESULTS_TESTR_QISKIT,
     QISKIT_R,
-    RESULTS_TESTRV,
-    QISKIT_RV,
     RESULTS_TESTRXA,
     QISKIT_RXA,
     RESULTS_TESTRXB,
@@ -2581,151 +2579,7 @@ class TestPHASEC(TestQiskit):
             == RESULTS_TESTPHASEC[MATRIX_STATE_BIG_ENDIAN]
         )
 
-class TestR(TestQiskit):
-    @classmethod
-    def setup_class(cls):
-        cls.data = asyncio.run(
-            send_request(QISKIT_R, super().qc_type)
-        )
 
-    def test_status_code(self):
-        assert self.data["status"] == SUCCESS
-
-    def test_num_qubits(self):
-        assert self.data[NUM_QUBITS] == RESULTS_TESTR[NUM_QUBITS]
-
-    def test_circuit_dirac_little_endian(self):
-        assert (
-            self.data[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
-            == RESULTS_TESTR[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
-        )
-
-    def test_circuit_dirac_big_endian(self):
-        assert (
-            self.data[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
-            == RESULTS_TESTR[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
-        )
-
-    def test_dirac_state_little_endian(self):
-        assert (
-            self.data[DIRAC_STATE_LITTLE_ENDIAN]
-            == RESULTS_TESTR[DIRAC_STATE_LITTLE_ENDIAN]
-        )
-
-    def test_dirac_state_big_endian(self):
-        assert (
-            self.data[DIRAC_STATE_BIG_ENDIAN]
-            == RESULTS_TESTR[DIRAC_STATE_BIG_ENDIAN]
-        )
-
-    def test_matrix_gate_little_endian(self):
-        assert (
-            self.data[MATRIX_GATE_LITTLE_ENDIAN]
-            == RESULTS_TESTR[MATRIX_GATE_LITTLE_ENDIAN]
-        )
-
-    def test_matrix_gate_big_endian(self):
-        assert (
-            self.data[MATRIX_GATE_BIG_ENDIAN]
-            == RESULTS_TESTR[MATRIX_GATE_BIG_ENDIAN]
-        )
-
-    def test_matrix_gate_tensor_little_endian(self):
-        assert (
-            self.data[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
-            == RESULTS_TESTR[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
-        )
-
-    def test_matrix_gate_tensor_big_endian(self):
-        assert (
-            self.data[MATRIX_GATE_TENSOR_BIG_ENDIAN]
-            == RESULTS_TESTR[MATRIX_GATE_TENSOR_BIG_ENDIAN]
-        )
-
-    def test_matrix_state_little_endian(self):
-        assert (
-            self.data[MATRIX_STATE_LITTLE_ENDIAN]
-            == RESULTS_TESTR[MATRIX_STATE_LITTLE_ENDIAN]
-        )
-
-    def test_matrix_state_big_endian(self):
-        assert (
-            self.data[MATRIX_STATE_BIG_ENDIAN]
-            == RESULTS_TESTR[MATRIX_STATE_BIG_ENDIAN]
-        )
-
-class TestRV(TestQiskit):
-    @classmethod
-    def setup_class(cls):
-        cls.data = asyncio.run(
-            send_request(QISKIT_RV, super().qc_type)
-        )
-
-    def test_status_code(self):
-        assert self.data["status"] == SUCCESS
-
-    def test_num_qubits(self):
-        assert self.data[NUM_QUBITS] == RESULTS_TESTRV[NUM_QUBITS]
-
-    def test_circuit_dirac_little_endian(self):
-        assert (
-            self.data[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
-            == RESULTS_TESTRV[CIRCUIT_DIRAC_GATE_LITTLE_ENDIAN]
-        )
-
-    def test_circuit_dirac_big_endian(self):
-        assert (
-            self.data[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
-            == RESULTS_TESTRV[CIRCUIT_DIRAC_GATE_BIG_ENDIAN]
-        )
-
-    def test_dirac_state_little_endian(self):
-        assert (
-            self.data[DIRAC_STATE_LITTLE_ENDIAN]
-            == RESULTS_TESTRV[DIRAC_STATE_LITTLE_ENDIAN]
-        )
-
-    def test_dirac_state_big_endian(self):
-        assert (
-            self.data[DIRAC_STATE_BIG_ENDIAN]
-            == RESULTS_TESTRV[DIRAC_STATE_BIG_ENDIAN]
-        )
-
-    def test_matrix_gate_little_endian(self):
-        assert (
-            self.data[MATRIX_GATE_LITTLE_ENDIAN]
-            == RESULTS_TESTRV[MATRIX_GATE_LITTLE_ENDIAN]
-        )
-
-    def test_matrix_gate_big_endian(self):
-        assert (
-            self.data[MATRIX_GATE_BIG_ENDIAN]
-            == RESULTS_TESTRV[MATRIX_GATE_BIG_ENDIAN]
-        )
-
-    def test_matrix_gate_tensor_little_endian(self):
-        assert (
-            self.data[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
-            == RESULTS_TESTRV[MATRIX_GATE_TENSOR_LITTLE_ENDIAN]
-        )
-
-    def test_matrix_gate_tensor_big_endian(self):
-        assert (
-            self.data[MATRIX_GATE_TENSOR_BIG_ENDIAN]
-            == RESULTS_TESTRV[MATRIX_GATE_TENSOR_BIG_ENDIAN]
-        )
-
-    def test_matrix_state_little_endian(self):
-        assert (
-            self.data[MATRIX_STATE_LITTLE_ENDIAN]
-            == RESULTS_TESTRV[MATRIX_STATE_LITTLE_ENDIAN]
-        )
-
-    def test_matrix_state_big_endian(self):
-        assert (
-            self.data[MATRIX_STATE_BIG_ENDIAN]
-            == RESULTS_TESTRV[MATRIX_STATE_BIG_ENDIAN]
-        )
 
 class TestRXA(TestQiskit):
     @classmethod

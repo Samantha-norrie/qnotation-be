@@ -52,6 +52,7 @@ gate_aliases = {
         "simplified-toffoli",
     ],
     GateNames.ROTATIONAL.value: ["r", "rot", "rotational"],
+    GateNames.ROTATIONAL_V.value: ["rv", "rotv", "rotational-v"],
     GateNames.ROTATIONAL_X.value: ["rx", "rot-x", "rotational-x", "rotational-not"],
     GateNames.ROTATIONAL_X_X.value: ["rxx", "rot-xx", "rotational-xx", "rotational-not-not"],
     GateNames.ROTATIONAL_Y.value: ["ry", "rot-y", "rotational-y"],

@@ -1,0 +1,52 @@
+name: Pytest Test Suites
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Cirq test suite
+        run: |
+          pytest -q testsuites/cirq_testsuite.py \
+            --junitxml=reports/junit-cirq.xml
+
+      - name: Run Qiskit test suite
+        run: |
+          pytest -q testsuites/qiskit_testsuite.py \
+            --junitxml=reports/junit-qiskit.xml
+
+      - name: Run PennyLane test suite
+        run: |
+          pytest -q testsuites/pennylane_testsuite.py \
+            --junitxml=reports/junit-pennylane.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-reports-py${{ matrix.python-version }}
+          path: reports/

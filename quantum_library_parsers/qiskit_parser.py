@@ -146,7 +146,9 @@ class QiskitParser(Parser):
         """
         gate_information_list = []
         for gate in gate_attributes:
+            print("before", gate["name"])
             name = get_gate_acronym(gate["name"])
+            print(name)
             qubit_indices = gate["qubit_indices"]
             params = gate["params"]
             print("qiskit params", params)
